@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfId3TagEdit", "WpfId3TagEdit\WpfId3TagEdit.csproj", "{E025DFA7-3DF4-4CF4-A28B-9C2D711460F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ID3TagEditLib", "..\ID3TagEditLib\ID3TagEditLib\ID3TagEditLib.csproj", "{E56B4119-5A9A-4D11-8460-258F9DFAE181}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E025DFA7-3DF4-4CF4-A28B-9C2D711460F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E025DFA7-3DF4-4CF4-A28B-9C2D711460F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E025DFA7-3DF4-4CF4-A28B-9C2D711460F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E025DFA7-3DF4-4CF4-A28B-9C2D711460F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E56B4119-5A9A-4D11-8460-258F9DFAE181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E56B4119-5A9A-4D11-8460-258F9DFAE181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E56B4119-5A9A-4D11-8460-258F9DFAE181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E56B4119-5A9A-4D11-8460-258F9DFAE181}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

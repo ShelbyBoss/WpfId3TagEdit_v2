@@ -1,0 +1,19 @@
+﻿<Window x:Class="WpfId3TagEdit.GetTextWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfId3TagEdit"
+        mc:Ignorable="d"
+        Title="GetTextWindow" Height="300" Width="300">
+    <StackPanel>
+        <TextBlock Name="tblText" Text="Block" Margin="5" TextWrapping="Wrap"/>
+        <TextBox Name="tbxText" Margin="5" KeyUp="tbxText_KeyUp"/>
+
+        <StackPanel Orientation="Horizontal">
+            <Button Content="OK" Width="50" Margin="5" Click="OK_Click"/>
+            <Button Content="Skip" Width="50" Margin="5" Click="Skip_Click"/>
+            <Button Content="Cancel" Width="50" Margin="5" Click="Cancel_Click"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

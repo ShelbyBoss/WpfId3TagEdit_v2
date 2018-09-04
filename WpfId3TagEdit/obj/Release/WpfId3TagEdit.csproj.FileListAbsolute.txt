@@ -1,0 +1,25 @@
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\WpfId3TagEdit.exe.config
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.csprojResolveAssemblyReference.cache
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\AskPathOrTagWindow.g.cs
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\GetTextWindow.g.cs
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\App.g.cs
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit_MarkupCompile.cache
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit_MarkupCompile.lref
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\WpfId3TagEdit.exe
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\WpfId3TagEdit.pdb
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\FolderFileLib.dll
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\ID3TagEditLib.dll
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\ID3TagLib.dll
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\ID3TagEditLib.pdb
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\MainWindow.g.cs
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\AskPathOrTagWindow.baml
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\GetTextWindow.baml
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\MainWindow.baml
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.g.resources
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.Properties.Resources.resources
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.csproj.GenerateResource.Cache
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.exe
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\Eigentlich Fertig\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.pdb
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\bin\Release\WpfId3TagEdit.exe.config
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.exe
+C:\Users\Clemens\Documents\Visual Studio 2015\Projects\ID3TagApps\WpfId3TagEdit\WpfId3TagEdit\obj\Release\WpfId3TagEdit.pdb

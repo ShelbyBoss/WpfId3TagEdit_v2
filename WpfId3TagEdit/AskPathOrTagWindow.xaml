@@ -1,0 +1,24 @@
+﻿<Window x:Class="WpfId3TagEdit.AskPathOrTagWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfId3TagEdit"
+        mc:Ignorable="d"
+        Title="AskPathOrTagWindow" Height="200" Width="300" KeyUp="Window_KeyUp">
+    <Grid>
+        <StackPanel>
+            <TextBlock Name="tblQuestion" Text="Path or Tag for: " Margin="3"/>
+            <TextBlock Name="tblPath" Text="Path: " Margin="3"/>
+            <TextBlock Name="tblTag" Text="Tag:  " Margin="3"/>
+
+            <TextBox Name="tbxOther" Margin="3"/>
+
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Path" Width="50" Margin="3" Click="Path_Click"/>
+                <Button Content="Tag" Width="50" Margin="3" Click="Tag_Click"/>
+                <Button Content="Other" Width="50" Margin="3" Click="Other_Click"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
