@@ -6,8 +6,12 @@
         xmlns:local="clr-namespace:WpfId3TagEdit"
         xmlns:ff="clr-namespace:FolderFile;assembly=FolderFileLib"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="700">
+        Title="MainWindow" Height="350" Width="900">
 
+    <Window.Resources>
+        <local:FontWeightConverter x:Key="weightCon"/>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -23,7 +27,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <ff:FolderPicker Grid.Row="4" TwoLines="False" WithCheckbox="True" Margin="5"
+        <ff:FolderPicker Grid.Row="4" SingleLine="False"  Margin="5"
                          Folder="{Binding FilesFolder,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
 
         <ListBox Grid.Row="0" Grid.RowSpan="4" Name="lbxFiles" ItemsSource="{Binding Files}" 
@@ -31,7 +35,8 @@
                  SelectedItem="{Binding CurrentFile,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Source.Name}"/>
+                    <TextBlock Text="{Binding Item1.Source.Name}" 
+                               FontWeight="{Binding Item2.IsSync,Converter={StaticResource weightCon}}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -48,27 +53,32 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Text="Title:" Margin="3,2,0,2" VerticalAlignment="Center" 
-                       TextAlignment="Right" FontStyle="{Binding Title.TitleStyle}"/>
+                       TextAlignment="Right" FontWeight="{Binding Title.IsSync,Converter={StaticResource weightCon}}"/>
             <TextBox Grid.Column="1" Grid.Row="0" Margin="3,2" Text="{Binding Title.Value,Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="1" Text="Artist:" Margin="3,2,0,2" VerticalAlignment="Center" 
-                       TextAlignment="Right" FontStyle="{Binding Artist.TitleStyle}"/>
+                       TextAlignment="Right" FontWeight="{Binding Artist.IsSync,Converter={StaticResource weightCon}}"/>
             <TextBox Grid.Column="1" Grid.Row="1" Margin="3,2" Text="{Binding Artist.Value,Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="2" Text="Album:" Margin="3,2,0,2" VerticalAlignment="Center" 
-                       TextAlignment="Right" FontStyle="{Binding Album.TitleStyle}"/>
+                       TextAlignment="Right" FontWeight="{Binding Album.IsSync,Converter={StaticResource weightCon}}"/>
             <TextBox Grid.Column="1" Grid.Row="2" Margin="3,2" Text="{Binding Album.Value,Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="3" Text="Year:" Margin="3,2,0,2" VerticalAlignment="Center" 
-                       TextAlignment="Right" FontStyle="{Binding Year.TitleStyle}"/>
+                       TextAlignment="Right" FontWeight="{Binding Year.IsSync,Converter={StaticResource weightCon}}"/>
             <TextBox Grid.Column="1" Grid.Row="3" Margin="3,2" Text="{Binding Year.Value,Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="4" Text="Track Number:" Margin="3,2,0,2" VerticalAlignment="Center" 
-                       TextAlignment="Right" FontStyle="{Binding TrackNumber.TitleStyle}"/>
+                       TextAlignment="Right" FontWeight="{Binding TrackNumber.IsSync,Converter={StaticResource weightCon}}"/>
             <TextBox Grid.Column="1" Grid.Row="4" Margin="3,2" Text="{Binding TrackNumber.Value,Mode=TwoWay}"/>
+
+            <TextBlock Grid.Row="5" Text="FileName:" Margin="3,2,0,2" VerticalAlignment="Center" 
+                       TextAlignment="Right" FontWeight="{Binding CurrentFile.Item1.FileName.IsSync,Converter={StaticResource weightCon}}"/>
+            <TextBox Grid.Column="1" Grid.Row="5" Margin="3,2" Text="{Binding CurrentFile.Item1.FileName.FileName,Mode=TwoWay}"/>
         </Grid>
 
         <DataGrid Grid.Column="2" Grid.Row="1" Name="dgCur" ItemsSource="{Binding CurrentFrames}" 
@@ -99,6 +109,7 @@
             <Button Content="IDv1ToIDv2" Margin="3" Width="100" Click="IDv1ToIDv2_Click"/>
             <Button Content="RemoveNonTextFrames" Margin="3" Width="100" Click="RemoveNonTextFrames_Click"/>
             <Button Content="RemoveEmptyTextFrames" Margin="3" Width="100" Click="RemoveEmptyTextFrames_Click"/>
+            <Button Content="Load form other file" Margin="3" Width="100" Click="LoadFormOtherFile_Click"/>
         </WrapPanel>
     </Grid>
 </Window>

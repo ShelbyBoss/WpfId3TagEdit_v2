@@ -6,14 +6,14 @@ namespace WpfId3TagEdit
 {
     public partial class AskPathOrTagWindow : Window
     {
-        PathTagClass result;
+        private string result;
 
         public AskPathOrTagWindow()
         {
             InitializeComponent();
         }
 
-        public PathTagClass Ask(ArtistTitle kind, string path, string tag)
+        public string Ask(ArtistTitle kind, string path, string tag)
         {
             tblQuestion.Text += kind.ToString();
             tblPath.Text += path;
@@ -26,19 +26,19 @@ namespace WpfId3TagEdit
 
         private void Path_Click(object sender, RoutedEventArgs e)
         {
-            result = PathTagClass.GetPath();
+            result = tblPath.Text;
             Close();
         }
 
         private void Tag_Click(object sender, RoutedEventArgs e)
         {
-            result = PathTagClass.GetTag();
+            result = tblTag.Text;
             Close();
         }
 
         private void Other_Click(object sender, RoutedEventArgs e)
         {
-            result = PathTagClass.GetOther(tbxOther.Text);
+            result = tbxOther.Text;
             Close();
         }
 
@@ -47,19 +47,19 @@ namespace WpfId3TagEdit
             if (e.Key == Key.A)
             {
                 e.Handled = true;
-                result = PathTagClass.GetPath();
+                result = tblPath.Text;
                 Close();
             }
             else if (e.Key == Key.S)
             {
                 e.Handled = true;
-                result = PathTagClass.GetTag();
+                result = tblTag.Text;
                 Close();
             }
             else if (e.Key == Key.D)
             {
                 e.Handled = true;
-                result = PathTagClass.GetOther(tbxOther.Text);
+                result = tbxOther.Text;
                 Close();
             }
         }

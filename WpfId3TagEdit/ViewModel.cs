@@ -1,19 +1,18 @@
 ﻿using FolderFile;
 using ID3TagEditLib;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 
 namespace WpfId3TagEdit
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        private EditID3File currentFile;
+        private Tuple<EditID3File, IsUnsynchronizedDetector> currentFile;
         private Folder folder;
+        private Tuple<EditID3File, IsUnsynchronizedDetector>[] files;
 
         public MultipleTitleSyncronizer Title { get; private set; }
 
@@ -25,13 +24,28 @@ namespace WpfId3TagEdit
 
         public MultipleTrackNumberSyncronizer TrackNumber { get; private set; }
 
-        public int TagsCount { get { return currentFile?.ID3v2Tag.Count ?? 0; } }
+        public Tuple<EditID3File, IsUnsynchronizedDetector> CurrentFile
+        {
+            get { return currentFile; }
+            set
+            {
+                if (value == currentFile) return;
+
+                currentFile = value;
+
+                OnPropertyChanged(nameof(CurrentFile));
+                OnPropertyChanged(nameof(TagsCount));
+                OnPropertyChanged(nameof(TagsDiffCount));
+            }
+        }
+
+        public int TagsCount { get { return CurrentFile?.Item1?.V2Tag.Count ?? 0; } }
 
         public int TagsDiffCount
         {
             get
             {
-                EditFrame[] frames = currentFile?.ID3v2Tag?.ToArray() ?? new EditFrame[0];
+                EditFrame[] frames = CurrentFile?.Item1?.V2Tag?.ToArray() ?? new EditFrame[0];
 
                 return frames.Length - frames.Count(f => f is EditTextFrame);
             }
@@ -41,7 +55,17 @@ namespace WpfId3TagEdit
 
         public ObservableCollection<EditID3File> SelectedFiles { get; private set; }
 
-        public List<EditID3File> Files { get { return folder.GetFiles().Select(f => new EditID3File(f)).ToList(); } }
+        public Tuple<EditID3File, IsUnsynchronizedDetector>[] Files
+        {
+            get { return files; }
+            set
+            {
+                if (value == files) return;
+
+                files = value;
+                OnPropertyChanged(nameof(Files));
+            }
+        }
 
         public Folder FilesFolder
         {
@@ -52,20 +76,20 @@ namespace WpfId3TagEdit
 
                 folder = value;
 
-                OnPropertyChanged("FilesFolder");
-                OnPropertyChanged("Files");
+                OnPropertyChanged(nameof(FilesFolder));
+
+                Files = folder.Files.Select(GetFileTuple).ToArray();
             }
         }
 
         public ViewModel()
         {
             string myMusicPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
-            myMusicPath = @"H:\Musik";
+            //myMusicPath = @"H:\Musik";
 
-            folder = new Folder(myMusicPath, SubfolderType.This);
+            FilesFolder = new Folder(myMusicPath, SubfolderType.This);
 
             SelectedFiles = new ObservableCollection<EditID3File>();
-            SelectedFiles.CollectionChanged += SelectedFiles_CollectionChanged;
 
             CurrentFrames = new FrameSyncronizerCollection(SelectedFiles);
 
@@ -76,20 +100,17 @@ namespace WpfId3TagEdit
             TrackNumber = new MultipleTrackNumberSyncronizer(SelectedFiles);
         }
 
-        private void SelectedFiles_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (currentFile == SelectedFiles.FirstOrDefault()) return;
-
-            currentFile = SelectedFiles.FirstOrDefault();
-
-            OnPropertyChanged("TagsCount");
-            OnPropertyChanged("TagsDiffCount");
-        }
-
         public void UpdateFilesList()
         {
-            folder.RefreshFolderAndFiles();
-            OnPropertyChanged("FilesList");
+            Files = folder.Refresh().Select(GetFileTuple).ToArray();
+        }
+
+        private Tuple<EditID3File, IsUnsynchronizedDetector> GetFileTuple(FileInfo source)
+        {
+            EditID3File file = new EditID3File(source);
+            IsUnsynchronizedDetector detector = new IsUnsynchronizedDetector(file);
+
+            return (file, detector).ToTuple();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,7 +1,7 @@
 ﻿using ID3TagEditLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,6 +11,7 @@ namespace WpfId3TagEdit
     public partial class MainWindow : Window
     {
         private ViewModel viewModel;
+        private System.Windows.Forms.OpenFileDialog ofd;
 
         public MainWindow()
         {
@@ -20,6 +21,12 @@ namespace WpfId3TagEdit
             Height = 800;
 
             DataContext = viewModel = new ViewModel();
+
+            ofd = new System.Windows.Forms.OpenFileDialog()
+            {
+                InitialDirectory = viewModel.FilesFolder.FullName,
+                RestoreDirectory = true
+            };
         }
 
         private void Filter_Click(object sender, RoutedEventArgs e)
@@ -31,7 +38,10 @@ namespace WpfId3TagEdit
                     editFile.FilterID3v2Tags(AskRemoveFrame);
                     editFile.Save();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "FilterID3V2Frames", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -44,7 +54,10 @@ namespace WpfId3TagEdit
                     editFile.FileNameToID3Tag();
                     editFile.Save();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "PathToTag", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -57,14 +70,18 @@ namespace WpfId3TagEdit
                 try
                 {
                     editFile.Save();
+                    editFile.FileName.FileName = editFile.FileName.TagFileName;
 
-                    if (!editFile.IsSyncronized())
-                    {
-                        lbxFiles.SelectedItem = editFile;
-                        break;
-                    }
+                    //if (!tuple.IsSyncronized())
+                    //{
+                    //    lbxFiles.SelectedItem = tuple;
+                    //    break;
+                    //}
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "TagToPath", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -75,10 +92,12 @@ namespace WpfId3TagEdit
                 try
                 {
                     editFile.CompareID3v2TagWithPath(false, AskPathOrTag);
-                    editFile.ID3v2ToID3v1();
                     editFile.Save();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "TagVsPath", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -100,15 +119,17 @@ namespace WpfId3TagEdit
                     else if (result.Item1 == MessageBoxResult.Yes)
                     {
                         editFile.ChangeOrCreateTextFrame(frameId, result.Item2);
-                        editFile.ID3v2ToID3v1();
                         editFile.Save();
                     }
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "AskForEveryTitle", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
-        private PathTagClass AskPathOrTag(ArtistTitle kind, string path, string tag)
+        private string AskPathOrTag(ArtistTitle kind, string path, string tag)
         {
             return new AskPathOrTagWindow().Ask(kind, path, tag);
         }
@@ -122,14 +143,16 @@ namespace WpfId3TagEdit
 
         private void lbxFiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            foreach (EditID3File editFile in (IEnumerable)e.RemovedItems ?? Enumerable.Empty<EditID3File>())
+            foreach (Tuple<EditID3File, IsUnsynchronizedDetector> tuple in
+                (IEnumerable)e.RemovedItems ?? Enumerable.Empty<Tuple<EditID3File, IsUnsynchronizedDetector>>())
             {
-                viewModel.SelectedFiles.Remove(editFile);
+                viewModel.SelectedFiles.Remove(tuple.Item1);
             }
 
-            foreach (EditID3File editFile in (IEnumerable)e.AddedItems ?? Enumerable.Empty<EditID3File>())
+            foreach (Tuple<EditID3File, IsUnsynchronizedDetector> tuple in
+                (IEnumerable)e.AddedItems ?? Enumerable.Empty<Tuple<EditID3File, IsUnsynchronizedDetector>>())
             {
-                viewModel.SelectedFiles.Add(editFile);
+                viewModel.SelectedFiles.Add(tuple.Item1);
             }
         }
 
@@ -139,10 +162,16 @@ namespace WpfId3TagEdit
             {
                 try
                 {
-                    editFile.ID3v2ToID3v1();
-                    editFile.Save();
+                    editFile.Album.SetV2TagValue();
+                    editFile.Artist.SetV2TagValue();
+                    editFile.Title.SetV2TagValue();
+                    editFile.TrackNumber.SetV2TagValue();
+                    editFile.Year.SetV2TagValue();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "IDv2ToIDv1", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -152,10 +181,21 @@ namespace WpfId3TagEdit
             {
                 try
                 {
-                    editFile.ID3v1ToID3v2();
-                    editFile.Save();
+                    editFile.Album.CreateV2TagFrames();
+                    editFile.Album.SetV1TagValue();
+                    editFile.Artist.CreateV2TagFrames();
+                    editFile.Artist.SetV1TagValue();
+                    editFile.Title.CreateV2TagFrames();
+                    editFile.Title.SetV1TagValue();
+                    editFile.TrackNumber.CreateV2TagFrames();
+                    editFile.TrackNumber.SetV1TagValue();
+                    editFile.Year.CreateV2TagFrames();
+                    editFile.Year.SetV1TagValue();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "IDv1ToIDv2", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -168,7 +208,10 @@ namespace WpfId3TagEdit
                     editFile.RemoveNonTextFrames();
                     editFile.Save();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "RemoveEmptyTextFrames", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
             }
         }
 
@@ -178,17 +221,35 @@ namespace WpfId3TagEdit
             {
                 try
                 {
-                    IEnumerable<EditTextFrame> emptyFrames = editFile.ID3v2Tag.
+                    IEnumerable<EditTextFrame> emptyFrames = editFile.V2Tag.
                         OfType<EditTextFrame>().Where(f => string.IsNullOrWhiteSpace(f.Text)).ToArray();
 
                     foreach (EditTextFrame frame in emptyFrames)
                     {
-                        editFile.ID3v2Tag.Remove(frame);
+                        editFile.V2Tag.Remove(frame);
                     }
 
                     editFile.Save();
                 }
-                catch { }
+                catch (Exception exc)
+                {
+                    if (MessageBox.Show(exc.ToString(), "RemoveEmptyTextFrames", MessageBoxButton.OKCancel) == MessageBoxResult.Cancel) break;
+                }
+            }
+        }
+
+        private void LoadFormOtherFile_Click(object sender, RoutedEventArgs e)
+        {
+            if (viewModel.CurrentFile == null) return;
+            if (ofd.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+
+            try
+            {
+                viewModel.CurrentFile.Item1.LoadID3(ofd.FileName);
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.ToString(), "Load ID3 of other file");
             }
         }
 
@@ -198,9 +259,10 @@ namespace WpfId3TagEdit
 
             if (frameIdResult.Item1 == MessageBoxResult.Yes)
             {
-                MultipleFrameSyncronizer syncronizer = new MultipleFrameSyncronizer(viewModel.SelectedFiles, frameIdResult.Item2);
-
-                viewModel.CurrentFrames.Add(syncronizer);
+                foreach (EditID3File editFile in viewModel.SelectedFiles)
+                {
+                    editFile.V2Tag.Add(EditTextFrame.GetFrameFromId(frameIdResult.Item2));
+                }
             }
         }
     }

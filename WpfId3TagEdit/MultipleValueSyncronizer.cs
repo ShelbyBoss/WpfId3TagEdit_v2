@@ -5,14 +5,12 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows;
 
 namespace WpfId3TagEdit
 {
-    public abstract class MultipleValueSyncronizer : INotifyPropertyChanged
+    public abstract class MultipleValueSyncronizer : ISync, INotifyPropertyChanged
     {
         private const string defaultValue = null;
-        private static readonly FontStyle distinctValueTitleStyle = FontStyles.Normal, differentValuesTitleStyle = FontStyles.Italic;
 
         private ObservableCollection<EditID3File> files;
         private string value;
@@ -45,7 +43,7 @@ namespace WpfId3TagEdit
                 }
 
                 files = value;
-                OnPropertyChanged("Files");
+                OnPropertyChanged(nameof(Files));
             }
         }
 
@@ -57,7 +55,7 @@ namespace WpfId3TagEdit
                 if (value == this.value) return;
 
                 this.value = value;
-                IsDistinctValue = true;
+                IsSync = true;
 
                 foreach (EditID3File file in Files ?? Enumerable.Empty<EditID3File>())
                 {
@@ -65,14 +63,12 @@ namespace WpfId3TagEdit
                     file.Save();
                 }
 
-                OnPropertyChanged("Value");
-                OnPropertyChanged("TitleStyle");
+                OnPropertyChanged(nameof(Value));
+                OnPropertyChanged(nameof(IsSync));
             }
         }
 
-        public bool IsDistinctValue { get; private set; }
-
-        public FontStyle TitleStyle { get { return IsDistinctValue ? distinctValueTitleStyle : differentValuesTitleStyle; } }
+        public bool IsSync { get; private set; }
 
         public MultipleValueSyncronizer()
         {
@@ -107,36 +103,42 @@ namespace WpfId3TagEdit
                     if (Files != null && Files.Count > 1) continue;
 
                     value = GetValue(file);
-                    IsDistinctValue = true;
+                    IsSync = GetIsSync(file);
                 }
                 else if (GetValue(file) != value)
                 {
                     value = defaultValue;
-                    IsDistinctValue = false;
+                    IsSync = false;
                 }
                 else continue;
 
-                OnPropertyChanged("Value");
-                OnPropertyChanged("TitleStyle");
+                OnPropertyChanged(nameof(Value));
+                OnPropertyChanged(nameof(IsSync));
             }
 
             if (Files != null && Files.Count == 0)
             {
                 value = defaultValue;
-                IsDistinctValue = true;
+                IsSync = true;
 
-                OnPropertyChanged("Value");
-                OnPropertyChanged("TitleStyle");
+                OnPropertyChanged(nameof(Value));
+                OnPropertyChanged(nameof(IsSync));
             }
             else if (value == defaultValue && e.OldItems != null) Update();
         }
 
-        private void GetValue(out string value, out bool isDistinctValue)
+        private void GetValue(out string value, out bool isSync)
         {
             List<string> values = new List<string>();
 
             foreach (EditID3File file in Files ?? Enumerable.Empty<EditID3File>())
             {
+                if (!GetIsSync(file))
+                {
+                    value = defaultValue;
+                    isSync = false;
+                }
+
                 string tmp = GetValue(file);
 
                 if (values.Contains(tmp)) continue;
@@ -146,7 +148,7 @@ namespace WpfId3TagEdit
                 if (values.Count < 2) continue;
 
                 value = defaultValue;
-                isDistinctValue = false;
+                isSync = false;
 
                 return;
             }
@@ -154,16 +156,23 @@ namespace WpfId3TagEdit
             if (values.Count == 0)
             {
                 value = defaultValue;
-                isDistinctValue = true;
+                isSync = true;
+            }
+            else if (values.Count == 1)
+            {
+                value = values[0];
+                isSync = true;
             }
             else
             {
                 value = values[0];
-                isDistinctValue = false;
+                isSync = false;
             }
         }
 
         protected abstract string GetValue(EditID3File file);
+
+        protected abstract bool GetIsSync(EditID3File file);
 
         protected abstract void SetValue(string value, EditID3File file);
 
@@ -179,10 +188,10 @@ namespace WpfId3TagEdit
             GetValue(out newValue, out newIsDistinctValue);
 
             value = newValue;
-            IsDistinctValue = newIsDistinctValue;
+            IsSync = newIsDistinctValue;
 
-            OnPropertyChanged("Value");
-            OnPropertyChanged("TitleStyle");
+            OnPropertyChanged(nameof(Value));
+            OnPropertyChanged(nameof(IsSync));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

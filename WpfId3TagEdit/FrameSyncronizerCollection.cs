@@ -3,16 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 
 namespace WpfId3TagEdit
 {
     public class FrameSyncronizerCollection : ObservableCollection<MultipleFrameSyncronizer>
     {
+        private readonly Dictionary<EditID3File, EditID3v2Tag> tags;
+
         private ObservableCollection<EditID3File> parent;
 
         public FrameSyncronizerCollection(ObservableCollection<EditID3File> parent)
         {
+            tags = new Dictionary<EditID3File, EditID3v2Tag>();
+
             this.parent = parent;
 
             foreach (EditID3File file in parent)
@@ -38,12 +43,16 @@ namespace WpfId3TagEdit
 
         private void Add(EditID3File file)
         {
-            foreach (var frameIdGroup in file.ID3v2Tag.OfType<EditTextFrame>().GroupBy(f => f.FrameId))
+            foreach (var frameIdGroup in file.V2Tag.OfType<EditTextFrame>().GroupBy(f => f.FrameId))
             {
                 Add(frameIdGroup, file);
             }
 
-            file.ID3v2Tag.CollectionChanged += ID3v2Tag_CollectionChanged;
+            file.PropertyChanged += File_PropertyChanged;
+            file.V2Tag.CollectionChanged += ID3v2Tag_CollectionChanged;
+
+            if (tags.ContainsKey(file)) tags[file] = file.V2Tag;
+            else tags.Add(file, file.V2Tag);
         }
 
         private void Remove(EditID3File file)
@@ -52,11 +61,27 @@ namespace WpfId3TagEdit
             {
                 if (syncronizer.RemoveFrame(file) && !syncronizer.GetFrames().Any()) Remove(syncronizer);
             }
+
+            file.PropertyChanged -= File_PropertyChanged;
+
+            EditID3v2Tag tag;
+            if (tags.TryGetValue(file, out tag)) tag.CollectionChanged -= ID3v2Tag_CollectionChanged;
+        }
+
+        private void File_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            EditID3File file = (EditID3File)sender;
+
+            if (e.PropertyName == nameof(file.V2Tag))
+            {
+                Remove(file);
+                Add(file);
+            }
         }
 
         private void ID3v2Tag_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            EditID3File file = parent.FirstOrDefault(f => f.ID3v2Tag == sender);
+            EditID3File file = parent.FirstOrDefault(f => f.V2Tag == sender);
 
             if (file != null)
             {
@@ -79,8 +104,12 @@ namespace WpfId3TagEdit
             {
                 foreach (MultipleFrameSyncronizer syncronizer in this.ToArray())
                 {
-                    if (syncronizer.RemoveFrame(frame)) break;
-                    if (!syncronizer.GetFrames().Any()) Remove(syncronizer);
+                    if (syncronizer.RemoveFrame(frame))
+                    {
+                        if (!syncronizer.GetFrames().Any()) Remove(syncronizer);
+
+                        break;
+                    }
                 }
             }
         }
@@ -128,7 +157,7 @@ namespace WpfId3TagEdit
         {
             foreach (EditID3File file in parent)
             {
-                file.ID3v2Tag.Clear();
+                file.V2Tag.Clear();
             }
 
             base.ClearItems();
@@ -138,12 +167,12 @@ namespace WpfId3TagEdit
         {
             MultipleFrameSyncronizer syncronizer = this[index];
 
+            base.RemoveItem(index);
+
             foreach (KeyValuePair<EditID3File, EditTextFrame> pair in syncronizer.GetFrames().ToArray())
             {
-                pair.Key.ID3v2Tag.Remove(pair.Value);
+                pair.Key.V2Tag.Remove(pair.Value);
             }
-
-            base.RemoveItem(index);
         }
 
         protected override void SetItem(int index, MultipleFrameSyncronizer item)
@@ -152,7 +181,7 @@ namespace WpfId3TagEdit
 
             foreach (KeyValuePair<EditID3File, EditTextFrame> pair in replaceSyncronizer.GetFrames())
             {
-                pair.Key.ID3v2Tag.Remove(pair.Value);
+                pair.Key.V2Tag.Remove(pair.Value);
             }
 
             base.SetItem(index, item);

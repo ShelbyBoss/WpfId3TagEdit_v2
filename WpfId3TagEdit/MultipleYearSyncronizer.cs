@@ -1,39 +1,23 @@
-﻿using System;
+﻿using ID3TagEditLib;
 using System.Collections.ObjectModel;
-using ID3TagEditLib;
-using System.ComponentModel;
 
 namespace WpfId3TagEdit
 {
-    public class MultipleYearSyncronizer : MultipleValueSyncronizer
+    public class MultipleYearSyncronizer : MultiplePropertySyncronizerSyncronizer
     {
         public MultipleYearSyncronizer(ObservableCollection<EditID3File> source) : base(source)
         {
         }
 
-        protected override string GetValue(EditID3File file)
+        protected override string GetPropertyName()
         {
-            return file.Year.Value;
+            EditID3File file;
+            return nameof(file.Year);
         }
 
-        protected override void SetValue(string value, EditID3File file)
+        protected override PropertySynchronizer GetPropertySynchornizer(EditID3File file)
         {
-            file.Year.Value = value;
-        }
-
-        protected override void Subscribe(EditID3File file)
-        {
-            file.Year.PropertyChanged += OnPropertyChanged;
-        }
-
-        protected override void Unsubscribe(EditID3File file)
-        {
-            file.Year.PropertyChanged -= OnPropertyChanged;
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Value") Update();
+            return file.Year;
         }
     }
 }

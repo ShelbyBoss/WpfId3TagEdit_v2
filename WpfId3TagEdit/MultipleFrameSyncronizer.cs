@@ -1,11 +1,7 @@
 ﻿using ID3TagEditLib;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections;
-using System.Linq;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System;
 
 namespace WpfId3TagEdit
 {
@@ -13,7 +9,7 @@ namespace WpfId3TagEdit
     {
         private string frameId;
         private Dictionary<EditID3File, EditTextFrame> frames = new Dictionary<EditID3File, EditTextFrame>();
-        private List<EditTextFrame> isSettingTextFrames;
+        private List<EditTextFrame> settingTextFrames;
 
         public string FrameId
         {
@@ -23,14 +19,14 @@ namespace WpfId3TagEdit
                 if (value == frameId) return;
 
                 frameId = value;
-                OnPropertyChanged("FrameId");
+                OnPropertyChanged(nameof(FrameId));
             }
         }
 
         public MultipleFrameSyncronizer(ObservableCollection<EditID3File> source, string frameId) : base(source)
         {
             FrameId = frameId;
-            isSettingTextFrames = new List<EditTextFrame>();
+            settingTextFrames = new List<EditTextFrame>();
         }
 
         protected override string GetValue(EditID3File file)
@@ -38,6 +34,11 @@ namespace WpfId3TagEdit
             EditTextFrame frame;
 
             return frames.TryGetValue(file, out frame) ? frame.Text : string.Empty;
+        }
+
+        protected override bool GetIsSync(EditID3File file)
+        {
+            return true;
         }
 
         protected override void SetValue(string value, EditID3File file)
@@ -50,19 +51,19 @@ namespace WpfId3TagEdit
 
                 frames.Add(file, frame);
 
-                file.ID3v2Tag.Add(frame);
+                file.V2Tag.Add(frame);
             }
 
-            lock (isSettingTextFrames)
+            lock (settingTextFrames)
             {
-                isSettingTextFrames.Add(frame);
+                settingTextFrames.Add(frame);
             }
 
             frame.Text = value;
 
-            lock (isSettingTextFrames)
+            lock (settingTextFrames)
             {
-                isSettingTextFrames.Remove(frame);
+                settingTextFrames.Remove(frame);
             }
         }
 
@@ -117,7 +118,9 @@ namespace WpfId3TagEdit
 
         private void Frame_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Text" && !isSettingTextFrames.Contains(sender as EditTextFrame)) Update();
+            EditTextFrame frame = sender as EditTextFrame;
+
+            if (e.PropertyName == nameof(frame.Text) && !settingTextFrames.Contains(frame)) Update();
         }
 
         public ReadOnlyDictionary<EditID3File, EditTextFrame> GetFrames()

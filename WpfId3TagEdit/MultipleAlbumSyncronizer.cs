@@ -1,40 +1,23 @@
 ﻿using ID3TagEditLib;
 using System.Collections.ObjectModel;
-using System;
-using System.ComponentModel;
 
 namespace WpfId3TagEdit
 {
-    public class MultipleAlbumSyncronizer : MultipleValueSyncronizer
+    public class MultipleAlbumSyncronizer : MultiplePropertySyncronizerSyncronizer
     {
         public MultipleAlbumSyncronizer(ObservableCollection<EditID3File> source) : base(source)
         {
-
         }
 
-        protected override string GetValue(EditID3File file)
+        protected override string GetPropertyName()
         {
-            return file.Album.Value;
+            EditID3File file;
+            return nameof(file.Album);
         }
 
-        protected override void SetValue(string value, EditID3File file)
+        protected override PropertySynchronizer GetPropertySynchornizer(EditID3File file)
         {
-            file.Album.Value = value;
-        }
-
-        protected override void Subscribe(EditID3File file)
-        {
-            file.Album.PropertyChanged += OnPropertyChanged;
-        }
-
-        protected override void Unsubscribe(EditID3File file)
-        {
-            file.Album.PropertyChanged -= OnPropertyChanged;
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Value") Update();
+            return file.Album;
         }
     }
 }
