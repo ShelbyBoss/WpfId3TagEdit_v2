@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EditFileTupleCompare.cs" />
     <Compile Include="FontWeightConverter.cs" />
     <Compile Include="FrameSyncronizerCollection.cs" />
     <Compile Include="IsUnsynchronizedDetector.cs" />
@@ -74,6 +75,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SortedObservableCollection.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="AskPathOrTagWindow.xaml">
       <SubType>Designer</SubType>

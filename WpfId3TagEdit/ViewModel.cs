@@ -1,18 +1,22 @@
 ﻿using FolderFile;
 using ID3TagEditLib;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WpfId3TagEdit
 {
     public class ViewModel : INotifyPropertyChanged
     {
+        private static readonly EditFileTupleCompare comparer = new EditFileTupleCompare();
+
         private Tuple<EditID3File, IsUnsynchronizedDetector> currentFile;
         private Folder folder;
-        private Tuple<EditID3File, IsUnsynchronizedDetector>[] files;
 
         public MultipleTitleSyncronizer Title { get; private set; }
 
@@ -55,17 +59,7 @@ namespace WpfId3TagEdit
 
         public ObservableCollection<EditID3File> SelectedFiles { get; private set; }
 
-        public Tuple<EditID3File, IsUnsynchronizedDetector>[] Files
-        {
-            get { return files; }
-            set
-            {
-                if (value == files) return;
-
-                files = value;
-                OnPropertyChanged(nameof(Files));
-            }
-        }
+        public SortedObservableCollection<Tuple<EditID3File, IsUnsynchronizedDetector>> Files { get; private set; }
 
         public Folder FilesFolder
         {
@@ -78,12 +72,14 @@ namespace WpfId3TagEdit
 
                 OnPropertyChanged(nameof(FilesFolder));
 
-                Files = folder.Files.Select(GetFileTuple).ToArray();
+                UpdateFilesList(FilesFolder);
             }
         }
 
         public ViewModel()
         {
+            Files = new SortedObservableCollection<Tuple<EditID3File, IsUnsynchronizedDetector>>(comparer);
+
             string myMusicPath = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
             //myMusicPath = @"H:\Musik";
 
@@ -100,9 +96,59 @@ namespace WpfId3TagEdit
             TrackNumber = new MultipleTrackNumberSyncronizer(SelectedFiles);
         }
 
-        public void UpdateFilesList()
+        public async Task UpdateFilesList(Folder folder)
         {
-            Files = folder.Refresh().Select(GetFileTuple).ToArray();
+            FileInfo[] fileInfos = await Task.Run(() => folder?.Refresh()) ?? new FileInfo[0];
+            Queue<Tuple<EditID3File, IsUnsynchronizedDetector>> queue = new Queue<Tuple<EditID3File, IsUnsynchronizedDetector>>();
+
+            foreach (var tuple in Files)
+            {
+                tuple.Item1.FileName.PropertyChanged -= FileName_PropertyChanged;
+            }
+
+            Files.Clear();
+
+            Task producer = Task.Run(() =>
+            {
+                Parallel.For(0, fileInfos.Length, (i, s) =>
+                {
+                    if (folder != FilesFolder) s.Break();
+                    else
+                    {
+                        Tuple<EditID3File, IsUnsynchronizedDetector> fileTuple = GetFileTuple(fileInfos[i]);
+
+                        lock (queue)
+                        {
+                            queue.Enqueue(fileTuple);
+
+                            Monitor.Pulse(queue);
+                        }
+                    }
+                });
+
+                lock (queue)
+                {
+                    Monitor.Pulse(queue);
+                }
+            });
+
+            while (!producer.IsCompleted && folder == FilesFolder)
+            {
+                await Task.Run(() => { lock (queue) Monitor.Wait(queue); });
+
+                while (queue.Count > 0 && folder == FilesFolder)
+                {
+                    var tuple = queue.Dequeue();
+
+                    Files.Add(tuple);
+                    tuple.Item1.FileName.PropertyChanged += FileName_PropertyChanged;
+                }
+            }
+        }
+
+        private void FileName_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            Files.UpdateCollection();
         }
 
         private Tuple<EditID3File, IsUnsynchronizedDetector> GetFileTuple(FileInfo source)

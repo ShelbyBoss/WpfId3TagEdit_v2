@@ -35,23 +35,6 @@ namespace ID3TagEditLib
                     {
                         v1Tag[v1TagPropertyName] = value;
                     }
-                    catch (ArgumentException)
-                    {
-                        string numericText = string.Empty;
-
-                        foreach(char c in value)
-                        {
-                            if (!char.IsNumber(c)) break;
-
-                            numericText += c;
-                        }
-
-                        try
-                        {
-                            v1Tag[v1TagPropertyName] = numericText;
-                        }
-                        catch { }
-                    }
                     catch { }
 
                     foreach (EditTextFrame frame in GetTextFrames())
@@ -159,6 +142,15 @@ namespace ID3TagEditLib
 
                     if (IsSync) frame.Text = Value;
                 }
+            }
+        }
+
+        public void CreateV2FramesAndSetV1Value()
+        {
+            if (!string.IsNullOrWhiteSpace(v1Tag[v1TagPropertyName]))
+            {
+                CreateV2TagFrames();
+                SetV1TagValue();
             }
         }
 

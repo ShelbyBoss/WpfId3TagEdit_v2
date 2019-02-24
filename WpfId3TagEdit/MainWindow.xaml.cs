@@ -181,16 +181,11 @@ namespace WpfId3TagEdit
             {
                 try
                 {
-                    editFile.Album.CreateV2TagFrames();
-                    editFile.Album.SetV1TagValue();
-                    editFile.Artist.CreateV2TagFrames();
-                    editFile.Artist.SetV1TagValue();
-                    editFile.Title.CreateV2TagFrames();
-                    editFile.Title.SetV1TagValue();
-                    editFile.TrackNumber.CreateV2TagFrames();
-                    editFile.TrackNumber.SetV1TagValue();
-                    editFile.Year.CreateV2TagFrames();
-                    editFile.Year.SetV1TagValue();
+                    editFile.Album.CreateV2FramesAndSetV1Value();
+                    editFile.Artist.CreateV2FramesAndSetV1Value();
+                    editFile.Title.CreateV2FramesAndSetV1Value();
+                    editFile.TrackNumber.CreateV2FramesAndSetV1Value();
+                    editFile.Year.CreateV2FramesAndSetV1Value();
                 }
                 catch (Exception exc)
                 {

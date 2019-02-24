@@ -138,17 +138,31 @@ namespace ID3TagEditLib
                     break;
 
                 case nameof(TrackNumber):
-                    TrackNumber = value;
+                    TrackNumber = GetNumeric(value);
                     break;
 
                 case nameof(Year):
-                    Year = value;
+                    Year = GetNumeric(value);
                     break;
 
                 default:
                     throw new ArgumentException("PropertyName: " + propertyName);
             }
 
+        }
+
+        private static string GetNumeric(string value)
+        {
+            string numericText = string.Empty;
+
+            foreach (char c in value)
+            {
+                if (!char.IsNumber(c)) break;
+
+                numericText += c;
+            }
+
+            return numericText;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
