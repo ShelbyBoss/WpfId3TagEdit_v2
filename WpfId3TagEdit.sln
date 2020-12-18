@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfId3TagEdit", "WpfId3TagE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ID3TagEditLib", "ID3TagEditLib\ID3TagEditLib.csproj", "{E56B4119-5A9A-4D11-8460-258F9DFAE181}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderFileLib", "..\OrdnerDatei\FolderFileLib.csproj", "{0DE5F7B2-633A-4ACF-B6AD-DF37BD9E68D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderFileLib", "..\FolderFileLib\FolderFileLib.csproj", "{0DE5F7B2-633A-4ACF-B6AD-DF37BD9E68D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
